@@ -1,0 +1,15 @@
+{
+    "name": "nicolasbernaux/wp-rest-api",
+    "authors": [
+        {
+            "name": "Nicolas Bernaux",
+            "email": "bernaux.n@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "WpRestApi\\": "./"
+        }
+    }
+}
