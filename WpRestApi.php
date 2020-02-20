@@ -19,6 +19,7 @@ class App {
 
 	public function __construct() {
 		Routes\Listing::get_instance();
+		Routes\Slug::get_instance();
 	}
 
 	public function api_ini() {
