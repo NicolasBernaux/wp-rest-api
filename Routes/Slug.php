@@ -34,10 +34,11 @@ class Slug extends AbstractApi {
 			return $response;
 		}
 
-		$query = new WP_Query(
+		$post_type = array_key_exists( 'post_type', $params ) ? $params['post_type'] : 'any';
+		$query     = new WP_Query(
 			array(
 				'name'           => $params['slug'],
-				'post_type'      => 'any',
+				'post_type'      => $post_type,
 				'posts_per_page' => 1,
 			)
 		);
