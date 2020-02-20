@@ -13,12 +13,12 @@ class Slug extends AbstractApi {
 	public function init() {
 		register_rest_route(
 			App::API_PREFIX,
-			App::API_VERSION . '/' . self::SLUG,
+			App::API_VERSION . '/' . self::SLUG . '/(?P<slug>\S+)',
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'single' ),
 				'args'     => array(
-					'slug' => array(),
+					'post_type' => array(),
 				),
 			)
 		);
