@@ -36,7 +36,8 @@ class Listing extends AbstractApi {
 
 		$links = array();
 		foreach ( $posts as $post ) {
-			$links[] = get_permalink( $post );
+			$permalink = get_permalink( $post );
+			$links[]   = parse_url($permalink, PHP_URL_PATH);
 		}
 
 		return $links;
