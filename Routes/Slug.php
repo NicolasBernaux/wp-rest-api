@@ -65,6 +65,8 @@ class Slug extends AbstractApi {
 			$response = array_merge( (array) $response, array( 'meta' => $meta ) );
 		}
 
+		$response = apply_filters( 'wp_rest_api_alter_slug', $response, 10, 1);
+
 		// @TODO: get featured image
 		// @TODO: add filter for images
 
