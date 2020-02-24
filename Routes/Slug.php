@@ -60,6 +60,11 @@ class Slug extends AbstractApi {
 			}
 		}
 
+		$meta = get_post_meta( $post->ID );
+		if ( ! empty( $meta ) ) {
+			$response = array_merge( (array) $response, array( 'meta' => $meta ) );
+		}
+
 		// @TODO: get featured image
 		// @TODO: add filter for images
 
