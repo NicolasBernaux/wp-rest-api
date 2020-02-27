@@ -1,6 +1,7 @@
 <?php
 namespace WpRestApi\Routes;
 
+use Helper\Helper;
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -56,6 +57,16 @@ class Slug extends AbstractApi {
 			$acf_fields = get_fields( $post->ID );
 
 			if ( ! empty( $acf_fields ) ) {
+				foreach ( $acf_fields as &$field ) {
+					if ( is_array( $field ) &&
+						array_key_exists( 'type', $field ) &&
+						'image' === $field['type'] &&
+						array_key_exists( 'ID', $field ) &&
+						! empty( $field['ID'] )
+					) {
+						$field = Helper::image( $field['ID'] );
+					}
+				}
 				$response = array_merge( (array) $response, $acf_fields );
 			}
 		}
@@ -66,6 +77,11 @@ class Slug extends AbstractApi {
 		}
 
 		$response = apply_filters( 'wp_rest_api_alter_slug', $response, 10, 1);
+
+		$featured_image = Helper::image( $post );
+		if ( $featured_image ) {
+			$response['featured_image'] = $featured_image;
+		}
 
 		// @TODO: get featured image
 		// @TODO: add filter for images
