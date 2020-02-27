@@ -22,9 +22,6 @@ class App {
 		Routes\Slug::get_instance();
 		Routes\Menu::get_instance();
 	}
-
-	public function api_ini() {
-	}
 }
 
 new \WpRestApi\App();
