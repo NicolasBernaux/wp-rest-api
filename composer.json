@@ -1,5 +1,6 @@
 {
     "name": "nicolasbernaux/wp-rest-api",
+    "type": "wordpress-muplugin",
     "authors": [
         {
             "name": "Nicolas Bernaux",
