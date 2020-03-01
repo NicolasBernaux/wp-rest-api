@@ -14,7 +14,18 @@ class Slug extends AbstractApi {
 	public function init() {
 		register_rest_route(
 			App::API_PREFIX,
-			App::API_VERSION . '/' . self::SLUG . '/(?P<slug>\S+)',
+			App::API_VERSION . '/' . self::SLUG,
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'single' ),
+				'args'     => array(
+					'post_type' => array(),
+				),
+			)
+		);
+		register_rest_route(
+			App::API_PREFIX,
+			App::API_VERSION . '/' . self::SLUG . '/(?P<name>\S+)',
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'single' ),
@@ -28,29 +39,27 @@ class Slug extends AbstractApi {
 	public function single( WP_REST_Request $request ) {
 		$params = $request->get_params();
 
-		if ( empty( $params ) || ! $params['slug'] ) {
-			$response = new WP_REST_Response( array( 'No params found' ) );
-			$response->set_status( 500 );
-
-			return $response;
-		}
-
-		$post_type = array_key_exists( 'post_type', $params ) ? $params['post_type'] : 'any';
-		$query     = new WP_Query(
-			array(
-				'name'           => $params['slug'],
-				'post_type'      => $post_type,
-				'posts_per_page' => 1,
-			)
+		// Defaults args
+		$args = array(
+			'post_type'      => 'any',
+			'posts_per_page' => 1,
 		);
 
-		$posts = $query->get_posts();
-		$post  = $posts[0];
+		// If no name get front page
+		if ( ! array_key_exists( 'name', $params ) || ! $params['name'] ) {
+			$args['p'] = get_option( 'page_on_front' );
+		}
 
-		if ( empty( $post ) ) {
+		$args = array_merge( $args, $params );
+
+		$query = new WP_Query( $args );
+		$posts = $query->get_posts();
+
+		if ( empty( $posts ) ) {
 			return array();
 		}
 
+		$post     = $posts[0];
 		$response = $post;
 
 		if ( function_exists( 'get_fields' ) ) {
@@ -76,15 +85,12 @@ class Slug extends AbstractApi {
 			$response = array_merge( (array) $response, array( 'meta' => $meta ) );
 		}
 
-		$response = apply_filters( 'wp_rest_api_alter_slug', $response, 10, 1);
+		$response = apply_filters( 'wp_rest_api_alter_slug', $response, 10, 1 );
 
 		$featured_image = Helper::image( $post );
 		if ( $featured_image ) {
 			$response['featured_image'] = $featured_image;
 		}
-
-		// @TODO: get featured image
-		// @TODO: add filter for images
 
 		return $response;
 	}
