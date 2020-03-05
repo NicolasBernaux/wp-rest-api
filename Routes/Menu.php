@@ -27,24 +27,30 @@ class Menu extends AbstractApi {
 			return;
 		};
 
-		$reponse = array();
+		$response = array();
 		foreach ( $menus as $menu ) {
-			$menu_items             = wp_get_nav_menu_items( $menu->slug );
-			$mapped_items           = $this->mapp_items( $menu_items );
-			$reponse[ $menu->slug ] = $this->build_tree( $mapped_items );
+			$menu_items              = wp_get_nav_menu_items( $menu->slug );
+			$mapped_items            = $this->map_items( $menu_items );
+			$response[ $menu->slug ] = $this->build_tree( $mapped_items );
 		}
 
-		return $reponse;
+		return $response;
 	}
 
-	public function mapp_items( array &$items ) {
+	public function map_items( array &$items ) {
 		$mapped_items = array();
 
 		foreach ( $items as $item ) {
+			$url = $item->url;
+			if ( strpos( $item->url, $_SERVER['HTTP_HOST'] ) ) {
+				$parsed_url = wp_parse_url( $item->url );
+				$url        = $parsed_url['path'];
+			}
+
 			$mapped_items[ $item->ID ]                   = new \stdClass();
 			$mapped_items[ $item->ID ]->ID               = $item->ID;
 			$mapped_items[ $item->ID ]->menu_item_parent = $item->menu_item_parent;
-			$mapped_items[ $item->ID ]->url              = $item->url;
+			$mapped_items[ $item->ID ]->url              = $url;
 			$mapped_items[ $item->ID ]->title            = $item->title;
 			$mapped_items[ $item->ID ]->type_label       = $item->type_label;
 		}
